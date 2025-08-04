@@ -1,31 +1,33 @@
 const express=require("express")
 const app=express()
-// app.use("/user",(req,res,next)=>{
-//    console.log("this is first res1")
-//    // res.send("this first res1")
-//    next()
-// },(req,res,next)=>{
-//    console.log("this second res")
-//    // res.send("this is second res")
-//    next()
-// },(req,res,next)=>{
-//    res.send("this 3ed res")
-// })
-const {AmintAuth,UserAuth}=require("./midillerware/Auth")
-app.use("/admin",AmintAuth)
-app.use("/user",UserAuth)
-app.get("/user/getname",(req,res)=>{
-   res.send("this user deatils")
-})
-app.get("/admin/user",(req,res)=>{
-   res.send("this admin page")
-})
-app.get("/admin/deleted",(req,res)=>{
-   res.send("user will bw deleted")
-})
+const conntectedDB=require("./configg/database")
 
- 
+const User=require("./model/user")
 
- app.listen(3000,()=>{
-    console.log("the server is runing ")
+app.post("/signup", async (req, res) => {
+  const user = new User({
+    Firstname: "nani",
+    LastName: "narendra",
+    EmailId: "nani@gmail.com",
+    Age: 21
+  });
+
+  try {
+   const savedUser = await user.save();
+  console.log("User saved:", savedUser);
+  res.send("user is saved");
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+
+conntectedDB().then(()=>{
+   console.log("database is connected")
+   app.listen(3000,()=>{
+   console.log("the server is runing ")
  })
+})
+.catch((err)=>{
+    console.log("db not conneacted something worng ")
+})
